@@ -1,0 +1,13 @@
+name: cs5330
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - matplotlib
+  - opencv
+  - ca-certificates
+  - certifi
+  - openssl
+  - jupyter
+  - ipykernel
