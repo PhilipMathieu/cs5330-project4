@@ -1,7 +1,7 @@
 /*
 Philip Englund Mathieu
 CS5330 Spring 2023
-Object database creation program
+Augmented Reality Program (C++ Implementation)
 */
 
 #include <cstdio>             // lots of standard C/C++ including printf, scanf
@@ -31,6 +31,8 @@ int capdev_init(cv::VideoCapture *&capdev)
     printf("Expected size: %d %d\n", refS.width, refS.height);
     return (0);
 }
+
+// prints a matrix to stdout
 void print_matrix(cv::Mat mat)
 {
     for (int i = 0; i < mat.rows; i++)
@@ -44,6 +46,7 @@ void print_matrix(cv::Mat mat)
     }
 }
 
+// prints a vector into a string for display
 void sprint_vector(cv::Mat vect, char *chars)
 {
     strcat(chars, "(");
@@ -58,6 +61,7 @@ void sprint_vector(cv::Mat vect, char *chars)
     strcat(chars, ")");
 }
 
+// draw XYZ axes on the provided frame
 void draw_axes(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix, cv::Mat distCoeffs)
 {
     std::vector<cv::Point3f> axes_in = {cv::Point3f(0, 0, 0), cv::Point3f(3, 0, 0), cv::Point3f(0, 3, 0), cv::Point3f(0, 0, 3)};
@@ -71,6 +75,7 @@ void draw_axes(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix, 
     cv::putText(frame, "z", axes[3], 0, 1, cv::Scalar(0, 0, 255), 1);
 }
 
+// draw a 3D cube on the provided frame
 void draw_cube(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix, cv::Mat distCoeffs)
 {
     std::vector<cv::Point3f> points_in;
@@ -95,6 +100,7 @@ void draw_cube(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix, 
     }
 }
 
+// draw a 3D sphere on the provided frame
 void draw_sphere(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix, cv::Mat distCoeffs)
 {
     float r = 3;
@@ -114,6 +120,7 @@ void draw_sphere(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix
     }
 }
 
+// draw a 3D torus on the provided frame
 void draw_torus(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix, cv::Mat distCoeffs)
 {
     float r = 1;
@@ -134,6 +141,7 @@ void draw_torus(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix,
     }
 }
 
+// draw a topological knot on the provided frame
 void draw_knot(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix, cv::Mat distCoeffs)
 {
     float s = 3;
@@ -152,6 +160,7 @@ void draw_knot(cv::Mat frame, cv::Mat rvec, cv::Mat tvec, cv::Mat cameraMatrix, 
     }
 }
 
+// print rotation and translation vectors on the provided frame
 void print_vecs(cv::Mat frame, cv::Mat rvec, cv::Mat tvec)
 {
     char chars[256] = "Rotation: ";

@@ -1,21 +1,25 @@
 '''
 Philip Englund Mathieu
 CS5330 Spring 2023
-Object database creation program
+Augmented Reality Program (Python Implementation)
 '''
 
-import cv2 as cv
-import numpy as np
-import xml.etree.ElementTree as ET
-from math import *
-import time
+import cv2 as cv                    # OpenCV
+import numpy as np                  # matrix library
+import xml.etree.ElementTree as ET  # for parsing xml
+from math import *                  # constants and basic functions
+import time                         # for timing performance
 
+# global constants
 PATTERN_SIZE = (9,6)
 CRITERIA = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_COUNT, 30, 0.1)
 
 def load_from_opencv_xml(filename, elementname, dtype='float32'):
     '''
-    This function is copied from stackexchange: https://stackoverflow.com/questions/11025477/error-loading-opencv-xml-file-with-python
+    Loads camera matrix and distortion coefficients from an OpenCV .xml file.
+    Inputs: filename, name of element to retrieve, datatype of element
+    Outputs: element
+    This function is copied from StackExchange: https://stackoverflow.com/questions/11025477/error-loading-opencv-xml-file-with-python
     '''
     try:
         tree = ET.parse(filename)
@@ -27,6 +31,12 @@ def load_from_opencv_xml(filename, elementname, dtype='float32'):
         return None
 
 def draw_axes(frame, rvec, tvec, cameraMatrix, distCoeffs):
+    '''
+    This function draws XYZ axes on an image.
+    Inputs: image to draw on, rotation vector, translation vector,
+        camera matrix, distortion coefficients
+    Outputs: None
+    '''
     axes = np.array([[0, 0, 0], [3, 0, 0], [0, 3, 0], [0, 0, 3]], dtype=np.float32)
     axes, _ = cv.projectPoints(axes, rvec, tvec, cameraMatrix, distCoeffs)
     axes = axes.astype(np.int32).reshape((-1,2))
@@ -38,12 +48,24 @@ def draw_axes(frame, rvec, tvec, cameraMatrix, distCoeffs):
     cv.putText(frame, "z", axes[3], 0, 1, (0, 0, 255), 1)
 
 def draw_cube(frame, rvec, tvec, cameraMatrix, distCoeffs):
+    '''
+    This function draws a cube on an image.
+    Inputs: image to draw on, rotation vector, translation vector,
+        camera matrix, distortion coefficients
+    Outputs: None
+    '''
     points = np.array([[i, j, k] for i in range(3) for j in range(3) for k in range(3)], dtype=np.float32)
     points, _ = cv.projectPoints(points, rvec, tvec, cameraMatrix, distCoeffs)
     points = points.astype(np.int32).reshape((-1,2))
     [cv.line(frame, points[i], points[j], (255, 0, 0), 1) for i in range(0, points.shape[0]-1) for j in range(1, points.shape[0])]
 
 def draw_sphere(frame, rvec, tvec, cameraMatrix, distCoeffs):
+    '''
+    This function draws a sphere on an image.
+    Inputs: image to draw on, rotation vector, translation vector,
+        camera matrix, distortion coefficients
+    Outputs: None
+    '''
     r = 3
     points = [(r * sin(theta) * cos(phi) + r, r * sin(theta) * sin(phi) + r, r * cos(theta) + r) for phi in np.linspace(0, pi, 10) for theta in np.linspace(0, 2*pi, 10) ]
     points = np.array(points, dtype=np.float32)
@@ -52,6 +74,12 @@ def draw_sphere(frame, rvec, tvec, cameraMatrix, distCoeffs):
     [cv.line(frame, points[i], points[i + 1], (255, 0, 255), 1) for i in range(0, points.shape[0]-1)]
 
 def draw_torus(frame, rvec, tvec, cameraMatrix, distCoeffs):
+    '''
+    This function draws a torus on an image.
+    Inputs: image to draw on, rotation vector, translation vector,
+        camera matrix, distortion coefficients
+    Outputs: None
+    '''
     r = 1
     r_inner = 3
     points = [((r_inner + r * sin(theta)) * cos(phi), (r_inner + r * sin(theta)) * sin(phi), r * cos(theta) + r) for phi in np.linspace(0, 2*pi, 10) for theta in np.linspace(0, 4*pi, 21)]
@@ -61,6 +89,12 @@ def draw_torus(frame, rvec, tvec, cameraMatrix, distCoeffs):
     [cv.line(frame, points[i], points[i + 1], (0, 255, 0), 5) for i in range(0, points.shape[0]-1)]
 
 def draw_knot(frame, rvec, tvec, cameraMatrix, distCoeffs):
+    '''
+    This function draws a knot on an image.
+    Inputs: image to draw on, rotation vector, translation vector,
+        camera matrix, distortion coefficients
+    Outputs: None
+    '''
     s = 3
     p = 3
     q = 2
@@ -71,6 +105,7 @@ def draw_knot(frame, rvec, tvec, cameraMatrix, distCoeffs):
     [cv.line(frame, points[i], points[i + 1], (0, 0, 255), 10) for i in range(0, points.shape[0]-1)]
 
 if __name__ == "__main__":
+
     # create a window and allocate an image
     cv.namedWindow("Augmented Reality", 1); # identifies a window
 
@@ -80,7 +115,6 @@ if __name__ == "__main__":
     # load camera calibration
     cameraMatrix = load_from_opencv_xml("./data/calibration.xml", "cameraMatrix", np.double)
     distCoeffs = load_from_opencv_xml("./data/calibration.xml", "distCoeffs", np.double)
-
     print(cameraMatrix)
     print(distCoeffs)
 
@@ -117,12 +151,15 @@ if __name__ == "__main__":
         # Find the chess board corners
         ret, corners = cv.findChessboardCorners(gray, PATTERN_SIZE, None)
 
-        if ret:
+        if ret: # corners successfully found
             corners = cv.cornerSubPix(gray, corners, (11, 11), (-1, -1), CRITERIA)
             ret, rvec, tvec = cv.solvePnP(objp, corners, cameraMatrix, distCoeffs)
+
+            # draw the pattern if successful
             if ret:
                  cv.drawChessboardCorners(frame, PATTERN_SIZE, corners, ret)
-
+            
+            # add the other drawings to the image
             draw_axes(frame, rvec, tvec, cameraMatrix, distCoeffs)
             if (current_objects["cube"]):
                 draw_cube(frame, rvec, tvec, cameraMatrix, distCoeffs)
@@ -144,6 +181,7 @@ if __name__ == "__main__":
         # see if there is a waiting keystroke
         key = cv.waitKey(10)
 
+        # parse key presses
         if key == ord('q'):
             break
         elif key == ord('c'):

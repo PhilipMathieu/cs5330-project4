@@ -1,13 +1,14 @@
 /*
 Philip Englund Mathieu
 CS5330 Spring 2023
-Object database creation program
+Camera Calibration Program
 */
 
 #include <cstdio>             // lots of standard C/C++ including printf, scanf
 #include <cstring>            // functions for working with strings/char arrays
 #include <opencv2/opencv.hpp> // OpenCV main include file
 
+// initialize my webcam
 int capdev_init(cv::VideoCapture *&capdev)
 {
     capdev = new cv::VideoCapture(0);
@@ -30,6 +31,7 @@ int capdev_init(cv::VideoCapture *&capdev)
     printf("Expected size: %d %d\n", refS.width, refS.height);
 }
 
+// print a matrix to stdout
 void print_matrix(cv::Mat mat)
 {
     for (int i = 0; i < mat.rows; i++)

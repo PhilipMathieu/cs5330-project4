@@ -1,7 +1,7 @@
 /*
 Philip Englund Mathieu
 CS5330 Spring 2023
-Object database creation program
+Harris Corner Detector
 */
 
 #include <cstdio>             // lots of standard C/C++ including printf, scanf
