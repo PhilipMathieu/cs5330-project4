@@ -22,11 +22,14 @@ all: clean example
 calibrate: src/calibrate.o
 	$(CC) -g $(CXXFLAGS) $^ -o $(BINDIR)/$@.out $(LIBS)
 
-augment: src/augment.o
+augment: src/augment.o data/calibration.xml
 	$(CC) -g $(CXXFLAGS) $^ -o $(BINDIR)/$@.out $(LIBS)
 
 harris: src/harris.o
 	$(CC) -g $(CXXFLAGS) $^ -o $(BINDIR)/$@.out $(LIBS)
+
+python: data/calibration.xml
+	python -B src/augment.py
 
 clean:
 	rm -f *.o *~ bin/*.out
