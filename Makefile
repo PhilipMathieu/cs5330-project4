@@ -12,14 +12,20 @@ INCLUDE = ./include
 CVPATH = /usr/local/include/opencv4
 
 # opencv libraries to link for this project
-LIBS = -ltiff -lpng -ljpeg -lz -lopencv_core -lopencv_highgui -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_imgproc -lopencv_objdetect
+LIBS = -ltiff -lpng -ljpeg -lz -lopencv_core -lopencv_highgui -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_imgproc -lopencv_objdetect -lopencv_calib3d
 
 # params for testing
 
 
 all: clean example
 
-example:
+calibrate: src/calibrate.o
+	$(CC) -g $(CXXFLAGS) $^ -o $(BINDIR)/$@.out $(LIBS)
+
+augment: src/augment.o
+	$(CC) -g $(CXXFLAGS) $^ -o $(BINDIR)/$@.out $(LIBS)
+
+harris: src/harris.o
 	$(CC) -g $(CXXFLAGS) $^ -o $(BINDIR)/$@.out $(LIBS)
 
 clean:
